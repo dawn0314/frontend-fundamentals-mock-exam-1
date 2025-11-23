@@ -34,6 +34,7 @@ export function SavingsCalculatorPage() {
     onChange: handlemonthlyAmountInput,
   } = useAmountInput();
   const [savingTerm, setSavingTerm] = useState(12);
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
   const filteredProducts = filterProducts(products, monthlyAmount, savingTerm);
 
@@ -87,24 +88,27 @@ export function SavingsCalculatorPage() {
       {filteredProducts.length < 1 ? (
         <ListRow contents={<ListRow.Texts type="1RowTypeA" top="조건에 맞는 상품이 없습니다." />} />
       ) : (
-        filteredProducts.map(product => (
-          <ListRow
-            key={product.id}
-            contents={
-              <ListRow.Texts
-                type="3RowTypeA"
-                top={product.name}
-                topProps={{ fontSize: 16, fontWeight: 'bold', color: colors.grey900 }}
-                middle={`연 이자율: ${product.annualRate}%`}
-                middleProps={{ fontSize: 14, color: colors.blue600, fontWeight: 'medium' }}
-                bottom={`${formatCurrency(product.minMonthlyAmount)}원 ~ ${formatCurrency(product.maxMonthlyAmount)} | ${product.availableTerms}개월`}
-                bottomProps={{ fontSize: 13, color: colors.grey600 }}
-              />
-            }
-            right={<Assets.Icon name="icon-check-circle-green" />}
-            onClick={() => {}}
-          />
-        ))
+        filteredProducts.map(product => {
+          const isSelected = product.id === selectedProduct;
+          return (
+            <ListRow
+              key={product.id}
+              contents={
+                <ListRow.Texts
+                  type="3RowTypeA"
+                  top={product.name}
+                  topProps={{ fontSize: 16, fontWeight: 'bold', color: colors.grey900 }}
+                  middle={`연 이자율: ${product.annualRate}%`}
+                  middleProps={{ fontSize: 14, color: colors.blue600, fontWeight: 'medium' }}
+                  bottom={`${formatCurrency(product.minMonthlyAmount)}원 ~ ${formatCurrency(product.maxMonthlyAmount)} | ${product.availableTerms}개월`}
+                  bottomProps={{ fontSize: 13, color: colors.grey600 }}
+                />
+              }
+              right={isSelected && <Assets.Icon name="icon-check-circle-green" />}
+              onClick={() => setSelectedProduct(product.id)}
+            />
+          );
+        })
       )}
 
       {/* 아래는 계산 결과 탭 내용이에요. 계산 결과 탭을 구현할 때 주석을 해제해주세요. */}
