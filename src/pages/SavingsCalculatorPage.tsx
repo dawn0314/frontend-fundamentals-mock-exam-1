@@ -1,9 +1,10 @@
+import { useAmountInput } from 'hooks/useAmountInput';
 import { useSavingsProduct } from 'hooks/useSavingsProducts';
+import { useState } from 'react';
 import {
   Assets,
   Border,
   colors,
-  http,
   ListHeader,
   ListRow,
   NavigationBar,
@@ -12,6 +13,9 @@ import {
   Tab,
   TextField,
 } from 'tosslib';
+import { filterProducts } from 'utils/filter';
+
+const SAVING_TERMS = [6, 12, 24];
 
 function formatCurrency(value: number): string {
   return value.toLocaleString();
@@ -19,6 +23,19 @@ function formatCurrency(value: number): string {
 
 export function SavingsCalculatorPage() {
   const { products, loading, error } = useSavingsProduct();
+  const {
+    amount: targetAmount,
+    displayAmount: targetAmountDisplay,
+    onChange: handletargetAmountInput,
+  } = useAmountInput();
+  const {
+    amount: monthlyAmount,
+    displayAmount: monthlyAmountDisplay,
+    onChange: handlemonthlyAmountInput,
+  } = useAmountInput();
+  const [savingTerm, setSavingTerm] = useState(12);
+
+  const filteredProducts = filterProducts(products, monthlyAmount, savingTerm);
 
   if (loading) return <div>상품 목록 불러오는 중...</div>;
   if (error) return <div>Error</div>;
@@ -27,14 +44,33 @@ export function SavingsCalculatorPage() {
     <>
       <NavigationBar title="적금 계산기" />
       <Spacing size={16} />
-      <TextField label="목표 금액" placeholder="목표 금액을 입력하세요" suffix="원" />
+      <TextField
+        label="목표 금액"
+        placeholder="목표 금액을 입력하세요"
+        suffix="원"
+        value={targetAmountDisplay}
+        onChange={handletargetAmountInput}
+      />
       <Spacing size={16} />
-      <TextField label="월 납입액" placeholder="희망 월 납입액을 입력하세요" suffix="원" />
+      <TextField
+        label="월 납입액"
+        placeholder="희망 월 납입액을 입력하세요"
+        suffix="원"
+        value={monthlyAmountDisplay}
+        onChange={handlemonthlyAmountInput}
+      />
       <Spacing size={16} />
-      <SelectBottomSheet label="저축 기간" title="저축 기간을 선택해주세요" value={12} onChange={() => {}}>
-        <SelectBottomSheet.Option value={6}>6개월</SelectBottomSheet.Option>
-        <SelectBottomSheet.Option value={12}>12개월</SelectBottomSheet.Option>
-        <SelectBottomSheet.Option value={24}>24개월</SelectBottomSheet.Option>
+      <SelectBottomSheet
+        label="저축 기간"
+        title="저축 기간을 선택해주세요"
+        value={savingTerm}
+        onChange={value => setSavingTerm(value)}
+      >
+        {SAVING_TERMS.map(term => (
+          <SelectBottomSheet.Option key={term} value={term}>
+            {term}개월
+          </SelectBottomSheet.Option>
+        ))}
       </SelectBottomSheet>
       <Spacing size={24} />
       <Border height={16} />
@@ -48,24 +84,28 @@ export function SavingsCalculatorPage() {
         </Tab.Item>
       </Tab>
 
-      {products.map(product => (
-        <ListRow
-          key={product.id}
-          contents={
-            <ListRow.Texts
-              type="3RowTypeA"
-              top={product.name}
-              topProps={{ fontSize: 16, fontWeight: 'bold', color: colors.grey900 }}
-              middle={`연 이자율: ${product.annualRate}%`}
-              middleProps={{ fontSize: 14, color: colors.blue600, fontWeight: 'medium' }}
-              bottom={`${formatCurrency(product.minMonthlyAmount)}원 ~ ${formatCurrency(product.maxMonthlyAmount)} | ${product.availableTerms}개월`}
-              bottomProps={{ fontSize: 13, color: colors.grey600 }}
-            />
-          }
-          right={<Assets.Icon name="icon-check-circle-green" />}
-          onClick={() => {}}
-        />
-      ))}
+      {filteredProducts.length < 1 ? (
+        <ListRow contents={<ListRow.Texts type="1RowTypeA" top="조건에 맞는 상품이 없습니다." />} />
+      ) : (
+        filteredProducts.map(product => (
+          <ListRow
+            key={product.id}
+            contents={
+              <ListRow.Texts
+                type="3RowTypeA"
+                top={product.name}
+                topProps={{ fontSize: 16, fontWeight: 'bold', color: colors.grey900 }}
+                middle={`연 이자율: ${product.annualRate}%`}
+                middleProps={{ fontSize: 14, color: colors.blue600, fontWeight: 'medium' }}
+                bottom={`${formatCurrency(product.minMonthlyAmount)}원 ~ ${formatCurrency(product.maxMonthlyAmount)} | ${product.availableTerms}개월`}
+                bottomProps={{ fontSize: 13, color: colors.grey600 }}
+              />
+            }
+            right={<Assets.Icon name="icon-check-circle-green" />}
+            onClick={() => {}}
+          />
+        ))
+      )}
 
       {/* 아래는 계산 결과 탭 내용이에요. 계산 결과 탭을 구현할 때 주석을 해제해주세요. */}
       {/* <Spacing size={8} />

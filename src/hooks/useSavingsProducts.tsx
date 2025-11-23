@@ -1,4 +1,4 @@
-import { SavingsProduct } from 'api/types';
+import { SavingsProduct } from 'types/types';
 import { useEffect, useState } from 'react';
 import { http } from 'tosslib';
 
