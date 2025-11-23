@@ -14,3 +14,7 @@ export function filterProducts(
     return isAmountInRange && isTermEqual;
   });
 }
+
+export function getRecommendedProducts(products: SavingsProduct[]): SavingsProduct[] {
+  return [...products].sort((a, b) => b.annualRate - a.annualRate).slice(0, 2);
+}

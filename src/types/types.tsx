@@ -6,3 +6,14 @@ export interface SavingsProduct {
   maxMonthlyAmount: number;
   availableTerms: number;
 }
+
+export interface CalculationResultProps {
+  selectedProduct: SavingsProduct | null;
+  targetAmount: string;
+  monthlyAmount: string;
+  savingTerm: number;
+  recommendedProducts: SavingsProduct[];
+  onProductSelect: (product: SavingsProduct) => void;
+}
+
+export type TabType = 'products' | 'results';
