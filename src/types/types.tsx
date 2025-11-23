@@ -16,4 +16,21 @@ export interface CalculationResultProps {
   onProductSelect: (product: SavingsProduct) => void;
 }
 
+export interface ProductListProps {
+  filteredProducts: SavingsProduct[];
+  selectedProduct: SavingsProduct | null;
+  onProductSelect: (product: SavingsProduct) => void;
+}
+
+export interface UserInputProps {
+  targetAmountDisplay: string;
+  monthlyAmountDisplay: string;
+  savingTerm: number;
+  selectedTab: TabType;
+  onTargetAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onMonthlyAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSavingTermChange: (value: number) => void;
+  onTabChange: (value: TabType) => void;
+}
+
 export type TabType = 'products' | 'results';
