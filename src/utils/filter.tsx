@@ -1,4 +1,4 @@
-import { SavingsProduct } from 'types/types';
+import { SavingsProduct } from 'features/savings/types/savings';
 
 export function filterProducts(
   products: SavingsProduct[],

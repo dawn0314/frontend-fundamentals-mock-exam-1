@@ -1,5 +1,5 @@
 import { Assets, Border, colors, ListHeader, ListRow, Spacing } from 'tosslib';
-import { CalculationResultProps } from 'types/types';
+import { CalculationResultProps } from 'features/savings/types/savings';
 import { calculateDifference, calculateExpectedProfit, calculateRecommendedMonthlyAmount } from 'utils/calculators';
 import { formatCurrency } from 'utils/formatter';
 

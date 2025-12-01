@@ -1,5 +1,5 @@
 import { Assets, colors, ListRow } from 'tosslib';
-import { ProductListProps } from 'types/types';
+import { ProductListProps } from 'features/savings/types/savings';
 import { formatCurrency } from 'utils/formatter';
 
 export function ProductList({ filteredProducts, selectedProduct, onProductSelect }: ProductListProps) {

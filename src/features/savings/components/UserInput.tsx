@@ -1,5 +1,5 @@
 import { Border, NavigationBar, SelectBottomSheet, Spacing, Tab, TextField } from 'tosslib';
-import { TabType, UserInputProps } from 'types/types';
+import { TabType, UserInputProps } from 'features/savings/types/savings';
 
 const SAVING_TERMS = [6, 12, 24];
 

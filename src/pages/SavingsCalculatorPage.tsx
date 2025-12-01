@@ -1,15 +1,12 @@
-import { CalculationResult } from 'components/calculationResult';
-import { ProductList } from 'components/ProductList';
-import { UserInput } from 'components/UserInput';
-import { useAmountInput } from 'hooks/useAmountInput';
-import { useSavingsProduct } from 'hooks/useSavingsProducts';
-import { useState } from 'react';
+import { ProductList, CalculationResult, UserInput } from 'features/savings/components/index';
+import { useAmountInput, useSavingsProduct } from 'features/savings/hooks/index';
+import { Suspense, useState } from 'react';
 import { Spacing } from 'tosslib';
-import { SavingsProduct, TabType } from 'types/types';
+import { SavingsProduct, TabType } from 'features/savings/types/savings';
 import { filterProducts, getRecommendedProducts } from 'utils/filter';
 
 export function SavingsCalculatorPage() {
-  const { products, loading, error } = useSavingsProduct();
+  const { data: products } = useSavingsProduct();
   const {
     amount: targetAmount,
     displayAmount: targetAmountDisplay,
@@ -27,9 +24,6 @@ export function SavingsCalculatorPage() {
   const filteredProducts = filterProducts(products, monthlyAmount, savingTerm);
   const recommendedProducts = getRecommendedProducts(filteredProducts);
 
-  if (loading) return <div>상품 목록 불러오는 중...</div>;
-  if (error) return <div>Error</div>;
-
   return (
     <>
       <UserInput
@@ -44,11 +38,13 @@ export function SavingsCalculatorPage() {
       />
 
       {selectedTab === 'products' ? (
-        <ProductList
-          filteredProducts={filteredProducts}
-          selectedProduct={selectedProduct}
-          onProductSelect={setSelectedProduct}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ProductList
+            filteredProducts={filteredProducts}
+            selectedProduct={selectedProduct}
+            onProductSelect={setSelectedProduct}
+          />
+        </Suspense>
       ) : (
         <>
           <Spacing size={8} />
